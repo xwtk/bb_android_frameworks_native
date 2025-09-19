@@ -455,7 +455,7 @@ void TouchInputMapper::configureParameters() {
         }
     }
 
-    mParameters.orientationAware = mParameters.deviceType == Parameters::DEVICE_TYPE_TOUCH_SCREEN;
+    mParameters.orientationAware = mParameters.deviceType == Parameters::DEVICE_TYPE_TOUCH_SCREEN || mParameters.deviceType == Parameters::DEVICE_TYPE_TOUCH_PAD;
     getDeviceContext().getConfiguration().tryGetProperty(String8("touch.orientationAware"),
                                                          mParameters.orientationAware);
 
@@ -463,7 +463,8 @@ void TouchInputMapper::configureParameters() {
     mParameters.associatedDisplayIsExternal = false;
     if (mParameters.orientationAware ||
         mParameters.deviceType == Parameters::DEVICE_TYPE_TOUCH_SCREEN ||
-        mParameters.deviceType == Parameters::DEVICE_TYPE_POINTER) {
+        mParameters.deviceType == Parameters::DEVICE_TYPE_POINTER ||
+        mParameters.deviceType == Parameters::DEVICE_TYPE_TOUCH_PAD) {
         mParameters.hasAssociatedDisplay = true;
         if (mParameters.deviceType == Parameters::DEVICE_TYPE_TOUCH_SCREEN) {
             mParameters.associatedDisplayIsExternal = getDeviceContext().isExternal();
@@ -668,7 +669,7 @@ void TouchInputMapper::configureSurface(nsecs_t when, bool* outResetNeeded) {
     if (viewportChanged) {
         mViewport = *newViewport;
 
-        if (mDeviceMode == DEVICE_MODE_DIRECT || mDeviceMode == DEVICE_MODE_POINTER) {
+        if (mDeviceMode == DEVICE_MODE_DIRECT || mDeviceMode == DEVICE_MODE_POINTER || mDeviceMode == DEVICE_MODE_UNSCALED) {
             // Convert rotated viewport to natural surface coordinates.
             int32_t naturalLogicalWidth, naturalLogicalHeight;
             int32_t naturalPhysicalWidth, naturalPhysicalHeight;
